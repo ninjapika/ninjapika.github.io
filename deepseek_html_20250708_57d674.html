@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DarkFlicks Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8a2be2;
+            --primary-dark: #6a0dad;
+            --bg-dark: #121212;
+            --bg-card: #1e1e1e;
+            --text-main: #ffffff;
+            --text-secondary: #b3b3b3;
+            --success: #00c853;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #8a2be2, #6a0dad);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .search-section {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        input, button {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+        
+        input {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(20, 20, 30, 0.9);
+            color: var(--text-main);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        
+        input::placeholder {
+            color: rgba(200, 200, 220, 0.7);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.3);
+        }
+        
+        button {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .controls-info {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .video-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: var(--transition);
+            border: 1px solid rgba(138, 43, 226, 0.2);
+            animation: cardAppear 0.5s ease;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+        
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .video-header {
+            padding: 20px;
+            background: rgba(30, 30, 40, 0.9);
+            border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        
+        .video-id {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .video-content {
+            padding: 20px;
+        }
+        
+        .video-preview-container {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(138, 43, 226, 0.2);
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .video-preview-container:hover .thumbnail {
+            transform: scale(1.05);
+        }
+        
+        .video-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(40, 40, 50, 0.9);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        
+        .action-btn:hover {
+            background: rgba(60, 60, 80, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.preview {
+            background: rgba(138, 43, 226, 0.2);
+        }
+        
+        .action-btn.preview:hover {
+            background: rgba(138, 43, 226, 0.3);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .mobile-info {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        
+        .mobile-info h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .mobile-steps {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .step-card {
+            background: rgba(40, 40, 60, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            width: 220px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+        }
+        
+        .step-card i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .step-card h4 {
+            margin-bottom: 10px;
+        }
+        
+        .step-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            input, button {
+                width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .results-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-film"></i> DarkFlicks Explorer</h1>
+            <p class="subtitle">Access video previews and copy direct video links instantly</p>
+        </header>
+        
+        <div class="search-section">
+            <div class="input-group">
+                <input type="number" id="startId" placeholder="Start ID (e.g., 890)" min="1" value="890">
+                <input type="number" id="endId" placeholder="End ID (e.g., 900)" min="1" value="894">
+                <button id="fetchVideos">
+                    <i class="fas fa-search"></i> Find Videos
+                </button>
+            </div>
+            <div class="controls-info">
+                <p>Enter a range of video IDs to load previews and access direct links</p>
+            </div>
+        </div>
+        
+        <div class="results-container" id="results">
+            <!-- Video cards will be loaded here -->
+        </div>
+        
+        <div class="mobile-info">
+            <h3><i class="fas fa-mobile-alt"></i> Access on Mobile</h3>
+            <p>Scan this QR code with your phone to open the site directly:</p>
+            
+            <div style="display: flex; justify-content: center; margin: 20px 0;">
+                <div id="qrcode" style="background: white; padding: 15px; border-radius: 10px;"></div>
+            </div>
+            
+            <div class="mobile-steps">
+                <div class="step-card">
+                    <i class="fab fa-github"></i>
+                    <h4>GitHub Pages</h4>
+                    <p>Upload to GitHub and enable GitHub Pages</p>
+                </div>
+                
+                <div class="step-card">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h4>Netlify Drop</h4>
+                    <p>Drag and drop this file to Netlify</p>
+                </div>
+                
+                <div class="step-card">
+                    <i class="fab fa-google-drive"></i>
+                    <h4>Google Drive</h4>
+                    <p>Host HTML file and share link</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Video link copied to clipboard!</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const resultsContainer = document.getElementById('results');
+        const fetchVideosBtn = document.getElementById('fetchVideos');
+        const startIdInput = document.getElementById('startId');
+        const endIdInput = document.getElementById('endId');
+        const notification = document.getElementById('notification');
+        const qrcodeDiv = document.getElementById('qrcode');
+        
+        // Generate QR code for current page
+        function generateQRCode() {
+            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.href)}`;
+            qrcodeDiv.innerHTML = `<img src="${qrCodeUrl}" alt="QR Code">`;
+        }
+        
+        // Generate preview URL
+        function generatePreviewUrl(videoId) {
+            return `https://darkflicks.com/vplyr.asp?${videoId}.mp4preview17742`;
+        }
+        
+        // Generate full video URL
+        async function generateFullVideoUrl(videoId) {
+            // SHA-256 hash function
+            const hash = await sha256(videoId.toString());
+            return `https://darkflicks.com/DFx/${hash}.mp4`;
+        }
+        
+        // SHA-256 function
+        async function sha256(message) {
+            // Encode as UTF-8
+            const msgBuffer = new TextEncoder().encode(message);
+            
+            // Hash the message
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            
+            // Convert ArrayBuffer to Array
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            
+            // Convert bytes to hex string
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notification.querySelector('span').textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Create video card
+        async function createVideoCard(videoId) {
+            const card = document.createElement('div');
+            card.className = 'video-card';
+            card.style.animationDelay = `${Math.random() * 0.5}s`;
+            
+            const previewUrl = generatePreviewUrl(videoId);
+            const fullVideoUrl = await generateFullVideoUrl(videoId);
+            const thumbnailUrl = `https://darkflicks.com/images/small/${videoId}.jpg`;
+            
+            card.innerHTML = `
+                <div class="video-header">
+                    <div class="video-id">
+                        <i class="fas fa-hashtag"></i> Video #${videoId}
+                    </div>
+                </div>
+                <div class="video-content">
+                    <div class="video-preview-container">
+                        <img src="${thumbnailUrl}" alt="Preview ${videoId}" class="thumbnail" 
+                             onerror="this.src='https://placehold.co/600x400/1e1e1e/b3b3b3?text=Thumbnail+${videoId}'">
+                    </div>
+                    <div class="video-actions">
+                        <a href="${previewUrl}" target="_blank" class="action-btn preview">
+                            <i class="fas fa-play"></i> Preview
+                        </a>
+                        <div class="action-btn copy-btn" data-url="${fullVideoUrl}">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add copy functionality
+            const copyBtn = card.querySelector('.copy-btn');
+            copyBtn.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                navigator.clipboard.writeText(url)
+                    .then(() => {
+                        showNotification('Video link copied to clipboard!');
+                    })
+                    .catch(err => {
+                        showNotification('Failed to copy link');
+                        console.error('Failed to copy:', err);
+                    });
+            });
+            
+            return card;
+        }
+        
+        // Fetch range of videos
+        async function fetchVideoRange() {
+            const startId = parseInt(startIdInput.value) || 890;
+            const endId = parseInt(endIdInput.value) || 894;
+            
+            if (endId - startId > 20) {
+                alert('Please limit your range to 20 videos at a time');
+                return;
+            }
+            
+            if (startId > endId) {
+                alert('Start ID must be less than End ID');
+                return;
+            }
+            
+            // Show loading state
+            resultsContainer.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <div class="loading-spinner" style="width: 50px; height: 50px; border: 5px solid rgba(138, 43, 226, 0.3); border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+                    <h3>Loading videos...</h3>
+                </div>
+            `;
+            
+            // Clear results
+            resultsContainer.innerHTML = '';
+            
+            // Load videos
+            for (let id = startId; id <= endId; id++) {
+                const card = await createVideoCard(id);
+                resultsContainer.appendChild(card);
+            }
+        }
+        
+        // Event Listeners
+        fetchVideosBtn.addEventListener('click', fetchVideoRange);
+        
+        // Initialize with sample video
+        window.addEventListener('DOMContentLoaded', async () => {
+            const card = await createVideoCard(890);
+            resultsContainer.appendChild(card);
+            generateQRCode();
+        });
+    </script>
+</body>
+</html>
